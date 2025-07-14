@@ -1,4 +1,4 @@
-const { ethers, config, run } = require("hardhat");
+const { ethers, config } = require("hardhat");
 const axios = require("axios");
 require("dotenv").config();
 
@@ -106,35 +106,6 @@ async function main() {
       const stakeTx = await vault.stake(0);
       await stakeTx.wait();
       console.log("✔  Staking berhasil!");
-
-      // Tahap 5: Verifikasi Otomatis
-      console.log("  - [5/5] Mencoba verifikasi otomatis...");
-      const customChain = config.etherscan.customChains.find(chain => chain.network === networkName);
-
-      if (customChain) {
-        console.log(`    - Konfigurasi verifikasi untuk ${networkName} ditemukan. Menjalankan...`);
-        // Jeda singkat sebelum verifikasi
-        await new Promise(resolve => setTimeout(resolve, 20000)); 
-
-        try {
-          await run("verify:verify", { address: nftAddress, constructorArguments: [randomName, randomSymbol] });
-          console.log(`    ✔  Kontrak NFT di ${nftAddress} berhasil diverifikasi.`);
-        } catch(verifyNftError) {
-          console.warn(`    ⚠  Verifikasi Kontrak NFT gagal: ${verifyNftError.message}`);
-        }
-
-        // Jeda lagi sebelum verifikasi kontrak kedua
-        await new Promise(resolve => setTimeout(resolve, 20000));
-
-        try {
-          await run("verify:verify", { address: vaultAddress, constructorArguments: [nftAddress] });
-          console.log(`    ✔  Kontrak Vault di ${vaultAddress} berhasil diverifikasi.`);
-        } catch (verifyVaultError) {
-          console.warn(`    ⚠  Verifikasi Kontrak Vault gagal: ${verifyVaultError.message}`);
-        }
-      } else {
-        console.log(`    - Tidak ada konfigurasi verifikasi untuk ${networkName}. Dilewati.`);
-      }
       
       console.log(`✔  Proses di jaringan ${networkName.toUpperCase()} SUKSES.`);
       deploymentResults.push(`✅ *${networkName.toUpperCase()}*: SUKSES!`);

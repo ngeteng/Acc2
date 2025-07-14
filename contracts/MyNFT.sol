@@ -7,18 +7,27 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MyNFT is ERC721URIStorage, ERC721Burnable, Ownable {
     uint256 private _nextTokenId;
+    uint256 public immutable maxSupply; // maxSupply sekarang ditentukan saat deploy
 
-    constructor(string memory name, string memory symbol)
+    constructor(
+        string memory name,
+        string memory symbol,
+        uint256 _maxSupply
+    )
         ERC721(name, symbol)
         Ownable(msg.sender)
-    {}
+    {
+        maxSupply = _maxSupply;
+    }
 
     function safeMint(address to, string memory uri) public onlyOwner {
+        require(_nextTokenId < maxSupply, "All tokens have been minted");
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
-
+    
+    // Fungsi override yang dibutuhkan untuk mengatasi konflik pewarisan
     function tokenURI(uint256 tokenId)
         public
         view

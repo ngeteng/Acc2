@@ -70,7 +70,7 @@ async function main() {
       const provider = new ethers.JsonRpcProvider(config.networks[networkName].url);
       const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
       
-      const randomName = `Verified NFT ${generateRandomString(6)}`;
+      const randomName = `NFT ${generateRandomString(6)}`;
       const randomSymbol = generateRandomString(4).toUpperCase();
       console.log(`  - Koleksi Dibuat: ${randomName} (${randomSymbol})`);
 

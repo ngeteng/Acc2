@@ -75,7 +75,7 @@ async function main() {
       console.log(`  - Koleksi Dibuat: ${randomName} (${randomSymbol})`);
 
       // Tahap 1: Deploy NFT
-      console.log("  - [1/5] Mendeploy MyNFT...");
+      console.log("  - [1/4] Mendeploy MyNFT...");
       const nftFactory = await ethers.getContractFactory("MyNFT", signer);
       const nft = await nftFactory.deploy(randomName, randomSymbol);
       await nft.waitForDeployment();
@@ -83,7 +83,7 @@ async function main() {
       console.log(`✔  MyNFT ter-deploy di: ${nftAddress}`);
 
       // Tahap 2: Minting
-      console.log(`  - [2/5] Memulai minting 5 NFT...`);
+      console.log(`  - [2/4] Memulai minting 5 NFT...`);
       const sampleTokenURI = "ipfs://bafkreihg5orwinp5t2bwxp7gsfb24v3cnitu72klbto3dyx7j2x2qg7dnm";
       for (let i = 0; i < 5; i++) {
         const mintTx = await nft.safeMint(signer.address, `${sampleTokenURI}/${i}.json`);
@@ -92,7 +92,7 @@ async function main() {
       console.log("✔  Proses minting selesai.");
       
       // Tahap 3: Deploy Vault
-      console.log("  - [3/5] Mendeploy NFTStakingVault...");
+      console.log("  - [3/4] Mendeploy NFTStakingVault...");
       const vaultFactory = await ethers.getContractFactory("NFTStakingVault", signer);
       const vault = await vaultFactory.deploy(nftAddress);
       await vault.waitForDeployment();
@@ -100,7 +100,7 @@ async function main() {
       console.log(`✔  NFTStakingVault ter-deploy di: ${vaultAddress}`);
 
       // Tahap 4: Staking
-      console.log("  - [4/5] Melakukan Staking NFT #0...");
+      console.log("  - [4/4] Melakukan Staking NFT #0...");
       const approveTx = await nft.approve(vaultAddress, 0);
       await approveTx.wait();
       const stakeTx = await vault.stake(0);

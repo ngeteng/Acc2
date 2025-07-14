@@ -3,7 +3,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 // ... (Bagian KONFIGURASI, LAPORAN TELEGRAM, dan FUNGSI HELPER tidak berubah, salin dari skrip lama)
-
+const targetNetworks = ["Monad", "Pharos", "Somnia", "OG"];
 // =============================================================
 // SCRIPT UTAMA (VERSI 2.0)
 // =============================================================

@@ -46,6 +46,10 @@ function shortenAddress(address) {
     return `${address.slice(0, 6)}...${address.slice(address.length - 4)}`;
 }
 
+function generateRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // =============================================================
 // SCRIPT UTAMA
 // =============================================================
@@ -53,7 +57,7 @@ async function main() {
   const deploymentResults = [];
   const startTime = new Date();
   
-  console.log(`\n🚀 Memulai Bot Ultimate Final ke ${targetNetworks.length} jaringan...`);
+  console.log(`\n🚀 Memulai Bot 'Master of Chaos' ke ${targetNetworks.length} jaringan...`);
 
   for (const networkName of targetNetworks) {
     console.log(`\n=================================================`);
@@ -62,7 +66,7 @@ async function main() {
 
     try {
       if (!config.networks[networkName] || !config.networks[networkName].url) {
-        throw new Error(`Konfigurasi jaringan untuk '${networkName}' tidak ditemukan di hardhat.config.js`);
+        throw new Error(`Konfigurasi jaringan untuk '${networkName}' tidak ditemukan.`);
       }
         
       const provider = new ethers.JsonRpcProvider(config.networks[networkName].url);
@@ -70,76 +74,80 @@ async function main() {
       
       const randomName = `NFT ${generateRandomString(6)}`;
       const randomSymbol = generateRandomString(4).toUpperCase();
-      console.log(`  - Koleksi Dibuat: ${randomName} (${randomSymbol})`);
+      const randomMaxSupply = generateRandomNumber(500, 2000);
+      console.log(`  - Koleksi Dibuat: ${randomName} (${randomSymbol}) dengan Max Supply: ${randomMaxSupply}`);
 
-      // Tahap 1: Deploy NFT
-      console.log("  - [1/6] Mendeploy MyNFT...");
+      // Tahap 1: Deploy NFT dengan Max Supply Acak
+      console.log("  - [1/5] Mendeploy MyNFT...");
       const nftFactory = await ethers.getContractFactory("MyNFT", signer);
-      const nft = await nftFactory.deploy(randomName, randomSymbol);
+      const nft = await nftFactory.deploy(randomName, randomSymbol, randomMaxSupply);
       await nft.waitForDeployment();
       const nftAddress = await nft.getAddress();
       console.log(`✔  MyNFT ter-deploy di: ${nftAddress}`);
 
-      // Tahap 2: Minting dengan Log Detail
-      console.log(`  - [2/6] Memulai minting 5 NFT...`);
+      // Tahap 2: Minting dengan Jumlah Acak
+      const randomMintCount = generateRandomNumber(2, 5);
+      console.log(`  - [2/5] Memulai minting ${randomMintCount} NFT...`);
       const sampleTokenURI = "ipfs://bafkreihg5orwinp5t2bwxp7gsfb24v3cnitu72klbto3dyx7j2x2qg7dnm";
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < randomMintCount; i++) {
         console.log(`    - Memproses mint untuk NFT ID ${i}...`);
         const mintTx = await nft.safeMint(signer.address, `${sampleTokenURI}/${i}.json`);
-        console.log(`      ┖ Tx Hash: ${mintTx.hash}`);
         await mintTx.wait();
       }
-      console.log("✔  Proses minting selesai.");
+      console.log(`✔  Proses minting ${randomMintCount} NFT selesai.`);
       
-      // Tahap 3: Deploy Vault
-      console.log("  - [3/6] Mendeploy NFTStakingVault...");
+      // Tahap 3 & 4: Deploy Vault & Staking
+      console.log("  - [3/5] Mendeploy NFTStakingVault...");
       const vaultFactory = await ethers.getContractFactory("NFTStakingVault", signer);
       const vault = await vaultFactory.deploy(nftAddress);
       await vault.waitForDeployment();
       const vaultAddress = await vault.getAddress();
       console.log(`✔  NFTStakingVault ter-deploy di: ${vaultAddress}`);
 
-      // Tahap 4: Staking
-      console.log("  - [4/6] Melakukan Staking NFT #0...");
+      console.log("  - [4/5] Melakukan Staking NFT #0...");
       const approveTx_stake = await nft.approve(vaultAddress, 0);
       await approveTx_stake.wait();
       const stakeTx = await vault.stake(0);
       await stakeTx.wait();
       console.log("✔  Staking berhasil!");
 
-      // Tahap 5: Interaksi Wajib - Approve
-      console.log("  - [5/6] Melakukan interaksi wajib: Approve...");
-      const operatorWallet = ethers.Wallet.createRandom();
-      const tokenIdToApprove = 1;
-      console.log(`    - Aksi: Approve NFT #${tokenIdToApprove} untuk wallet ${shortenAddress(operatorWallet.address)}...`);
-      const approveTx = await nft.approve(operatorWallet.address, tokenIdToApprove);
-      await approveTx.wait();
-      console.log(`    ✔  Approve berhasil!`);
+      // Tahap 5: Interaksi Acak (Multi-Burn atau Multi-Transfer)
+      console.log("  - [5/5] Melakukan interaksi acak tambahan...");
+      const randomAction = Math.floor(Math.random() * 2);
+      let finalActionDescription = "";
+      const availableTokens = randomMintCount - 1;
 
-      // Tahap 6: Interaksi Acak Tambahan
-      console.log("  - [6/6] Melakukan interaksi acak tambahan...");
-      const tokenIdForRandomAction = 2; // Menggunakan NFT #2 yang belum diapa-apakan
-      const randomAction = Math.floor(Math.random() * 2); // Acak antara 0 atau 1
-      let randomActionDescription = "";
-
-      if (randomAction === 0) {
-        // AKSI: TRANSFER
-        const randomWallet = ethers.Wallet.createRandom();
-        console.log(`    - Aksi dipilih: Mentransfer NFT #${tokenIdForRandomAction}...`);
-        const transferTx = await nft.transferFrom(signer.address, randomWallet.address, tokenIdForRandomAction);
-        await transferTx.wait();
-        randomActionDescription = `Transfer NFT #${tokenIdForRandomAction}`;
+      if (randomAction === 0 && availableTokens > 0) {
+        // AKSI: TRANSFER ACAK (2-5, tapi tidak lebih dari yang tersedia)
+        const transferCount = Math.min(generateRandomNumber(2, 5), availableTokens);
+        console.log(`    - Aksi dipilih: Mentransfer ${transferCount} NFT...`);
+        for (let i = 0; i < transferCount; i++) {
+          const tokenId = i + 1; // Mulai dari token ID 1
+          const randomWallet = ethers.Wallet.createRandom();
+          const transferTx = await nft.transferFrom(signer.address, randomWallet.address, tokenId);
+          await transferTx.wait();
+        }
+        finalActionDescription = `Transfer ${transferCount} NFT`;
         console.log(`    ✔  Transfer berhasil!`);
-      } else {
-        // AKSI: BURN
-        console.log(`    - Aksi dipilih: Membakar (burn) NFT #${tokenIdForRandomAction}...`);
-        const burnTx = await nft.burn(tokenIdForRandomAction);
-        await burnTx.wait();
-        randomActionDescription = `Burn NFT #${tokenIdForRandomAction}`;
+
+      } else if (availableTokens > 0) {
+        // AKSI: BURN ACAK (1-3, tapi tidak lebih dari yang tersedia)
+        const burnCount = Math.min(generateRandomNumber(1, 3), availableTokens);
+        console.log(`    - Aksi dipilih: Membakar ${burnCount} NFT...`);
+        for (let i = 0; i < burnCount; i++) {
+          const tokenId = i + 1; // Mulai dari token ID 1
+          const burnTx = await nft.burn(tokenId);
+          await burnTx.wait();
+        }
+        finalActionDescription = `Burn ${burnCount} NFT`;
         console.log(`    ✔  Burn berhasil!`);
+        
+      } else {
+        finalActionDescription = "Tidak ada aksi tambahan";
+        console.log(`    - Aksi dilewati: Tidak ada token yang tersedia untuk interaksi.`);
       }
       
-      const actionDescription = `Deploy, Mint, Stake, Approve & ${randomActionDescription}`;
+      const actionDescription = `Deploy, Mint ${randomMintCount}x, Stake & ${finalActionDescription}`;
       console.log(`✔  Proses di jaringan ${networkName.toUpperCase()} SUKSES.`);
       deploymentResults.push(`✅ *${networkName.toUpperCase()}*: SUKSES!\n  - Aksi: ${actionDescription}\n  - NFT: \`${nftAddress}\``);
 
@@ -155,7 +163,7 @@ async function main() {
   const endTime = new Date();
   const duration = ((endTime - startTime) / 1000).toFixed(2);
 
-  let summaryMessage = `*Laporan Rangkuman Bot Final*\n\n`;
+  let summaryMessage = `*Laporan Rangkuman Bot Master of Chaos*\n\n`;
   summaryMessage += `*Durasi Total*: ${duration} detik\n\n`;
   summaryMessage += `*Hasil Per Jaringan:*\n`;
   summaryMessage += deploymentResults.join('\n\n');

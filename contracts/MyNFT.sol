@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -20,24 +21,22 @@ contract MyNFT is ERC721URIStorage, ERC721Burnable, Ownable {
     }
     
     // ==================================================================
-    // **BAGIAN PERBAIKAN:** Menambahkan fungsi override di bawah ini
+    // **BAGIAN PERBAIKAN:** Memperbaiki daftar override
     // ==================================================================
 
-    // Override untuk mengatasi konflik `tokenURI`
     function tokenURI(uint256 tokenId)
         public
         view
-        override(ERC721URIStorage) // Cukup override satu, yang paling spesifik
+        override(ERC721, ERC721URIStorage) // PERBAIKAN DI SINI
         returns (string memory)
     {
         return super.tokenURI(tokenId);
     }
 
-    // Override untuk mengatasi konflik `supportsInterface`
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721URIStorage, ERC721Burnable) // Sebutkan kedua parent yang konflik
+        override(ERC721, ERC721URIStorage) // PERBAIKAN DI SINI
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

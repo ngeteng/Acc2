@@ -24,6 +24,6 @@ module.exports = {
     OG: {
       url: process.env.RPC_URL_OG || "",
       accounts: [privateKey],
-    },
+    }
   }
 };

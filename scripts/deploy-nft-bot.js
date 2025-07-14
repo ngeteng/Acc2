@@ -5,7 +5,7 @@ require("dotenv").config();
 // =============================================================
 // KONFIGURASI
 // =============================================================
-const targetNetworks = ["Monad", "Pharos", "Somnia", "OG"];
+const targetNetworks = ["Pharos", "Somnia", "OG"];
 
 // =============================================================
 // FUNGSI LAPORAN TELEGRAM
@@ -64,7 +64,7 @@ async function main() {
       const provider = new ethers.JsonRpcProvider(config.networks[networkName].url);
       const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
       
-      const randomName = `AI NFT Collection ${generateRandomString(6)}`;
+      const randomName = `NFT Collection ${generateRandomString(6)}`;
       const randomSymbol = generateRandomString(4).toUpperCase();
       console.log(`  - Koleksi Dibuat: ${randomName} (${randomSymbol})`);
 

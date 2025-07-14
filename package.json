@@ -1,0 +1,18 @@
+{
+  "name": "hardhat-nft-bot",
+  "version": "1.0.0",
+  "description": "Bot untuk deploy dan mint NFT secara otomatis di berbagai jaringan.",
+  "main": "hardhat.config.js",
+  "scripts": {
+    "deploy": "npx hardhat run scripts/deploy-nft-bot.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.0.2",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.6"
+  }
+}

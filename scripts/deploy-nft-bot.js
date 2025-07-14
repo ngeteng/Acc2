@@ -50,10 +50,10 @@ function shortenAddress(address) {
 // SCRIPT UTAMA
 // =============================================================
 async function main() {
-  const deploymentResults = []; // Deklarasi yang hilang
+  const deploymentResults = [];
   const startTime = new Date();
   
-  console.log(`\n🚀 Memulai Bot NFT Canggih ke ${targetNetworks.length} jaringan...`);
+  console.log(`\n🚀 Memulai Bot NFT (Mode Reliabilitas) ke ${targetNetworks.length} jaringan...`);
 
   for (const networkName of targetNetworks) {
     console.log(`\n=================================================`);
@@ -76,24 +76,21 @@ async function main() {
       const nftAddress = await nft.getAddress();
       console.log(`✔  MyNFT ter-deploy di: ${nftAddress}`);
 
-      // 2. MINTING PARALEL
+      // 2. MINTING SEKUENSIAL (Lebih Aman)
       const mintCount = 5;
-      console.log(`  - [2/3] Memulai minting ${mintCount} NFT secara paralel...`);
+      console.log(`  - [2/3] Memulai minting ${mintCount} NFT secara sekuensial...`);
       const sampleTokenURI = "ipfs://bafkreihg5orwinp5t2bwxp7gsfb24v3cnitu72klbto3dyx7j2x2qg7dnm";
       
-      const mintPromises = [];
       for (let i = 0; i < mintCount; i++) {
-        const mintPromise = nft.safeMint(signer.address, `${sampleTokenURI}/${i}.json`);
-        mintPromises.push(mintPromise);
+        console.log(`    - Memproses mint #${i + 1}...`);
+        const mintTx = await nft.safeMint(signer.address, `${sampleTokenURI}/${i}.json`);
+        await mintTx.wait(); // Tunggu satu per satu hingga selesai
       }
-      const mintTxs = await Promise.all(mintPromises);
-      console.log(`  - Menunggu konfirmasi untuk ${mintCount} transaksi mint...`);
-      await Promise.all(mintTxs.map(tx => tx.wait()));
       console.log("✔  Semua proses minting selesai.");
       
       // 3. INTERAKSI ACAK
       console.log("  - [3/3] Melakukan interaksi acak...");
-      const tokenIdToInteract = 0;
+      const tokenIdToInteract = 0; // Berinteraksi dengan NFT pertama (ID 0)
       const randomAction = Math.floor(Math.random() * 3);
       let actionDescription = "";
 

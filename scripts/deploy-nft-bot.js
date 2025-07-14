@@ -5,7 +5,7 @@ require("dotenv").config();
 // =============================================================
 // KONFIGURASI
 // =============================================================
-const targetNetworks = ["somnia-testnet", "OG"];
+const targetNetworks = ["Pharos", "somnia-testnet", "OG"];
 
 // =============================================================
 // FUNGSI LAPORAN TELEGRAM

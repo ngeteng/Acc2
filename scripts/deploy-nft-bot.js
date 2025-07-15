@@ -88,10 +88,10 @@ async function main() {
       // Tahap 2: Minting dengan Jumlah Acak
       const randomMintCount = generateRandomNumber(2, 5);
       console.log(`  - [2/5] Memulai minting ${randomMintCount} NFT...`);
-      const sampleTokenURI = "ipfs://bafkreihg5orwinp5t2bwxp7gsfb24v3cnitu72klbto3dyx7j2x2qg7dnm";
+      const sampleTokenURI = "ipfs://QmWiQE65tmpYzcokf8R3eSg5i2e24Dhr5Ka2u1terGSS26/";
       for (let i = 0; i < randomMintCount; i++) {
         console.log(`    - Memproses mint untuk NFT ID ${i}...`);
-        const mintTx = await nft.safeMint(signer.address, `${sampleTokenURI}/${i}.json`);
+        const mintTx = await nft.safeMint(signer.address, `${sampleTokenURI}${i}`);
         await mintTx.wait();
       }
       console.log(`✔  Proses minting ${randomMintCount} NFT selesai.`);

@@ -9,8 +9,8 @@ if (!privateKey) {
 module.exports = {
   solidity: "0.8.20",
   networks: {
-    Monad: {
-      url: process.env.RPC_URL_MONAD || "",
+    Xos: {
+      url: process.env.RPC_URL_XOS || "",
       accounts: [privateKey],
     },
     Pharos: {

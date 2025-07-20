@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "./WrappedNFT.sol";
 
-contract NFTWrapper {
+contract NFTWrapper is IERC721Receiver {
+    // Alamat kontrak NFT asli kita (MyNFT)
     IERC721 public immutable originalNft;
+    // Alamat kontrak NFT yang dibungkus (WrappedNFT)
     WrappedNFT public immutable wrappedNft;
 
+    // ... (mapping pelacakan tetap sama)
     mapping(uint256 => uint256) public originalToWrapped;
-    // Melacak pasangan ID token: wrappedId => originalId
     mapping(uint256 => uint256) public wrappedToOriginal;
 
     constructor(address _originalNftAddress, address _wrappedNftAddress) {
@@ -17,32 +19,40 @@ contract NFTWrapper {
         wrappedNft = WrappedNFT(_wrappedNftAddress);
     }
 
-    // Fungsi untuk membungkus NFT asli
-    function wrap(uint256 originalTokenId) public {
-        require(originalNft.isApprovedForAll(msg.sender, address(this)), "NFTWrapper: Approval for all not given");
-        originalNft.safeTransferFrom(msg.sender, address(this), originalTokenId);
+    // FUNGSI UTAMA BARU: Otomatis berjalan saat kontrak ini menerima NFT
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes memory data
+    ) public override returns (bytes4) {
+        // Pastikan NFT yang diterima adalah dari koleksi yang benar
+        require(msg.sender == address(originalNft), "NFTWrapper: Invalid NFT collection");
 
-        // Buat WNFT baru dengan ID yang sama untuk pengguna
-        wrappedNft.mint(msg.sender, originalTokenId);
+        // Buat WNFT baru dengan ID yang sama untuk pemilik asli (from)
+        wrappedNft.mint(from, tokenId);
 
         // Simpan data pelacakan
-        originalToWrapped[originalTokenId] = originalTokenId;
-        wrappedToOriginal[originalTokenId] = originalTokenId;
+        originalToWrapped[tokenId] = tokenId;
+        wrappedToOriginal[tokenId] = tokenId;
+
+        // Kembalikan selector untuk menandakan penerimaan berhasil
+        return this.onERC721Received.selector;
     }
 
-    // Fungsi untuk membuka kembali NFT asli
+    // Fungsi unwrap sekarang tidak memerlukan approve juga
     function unwrap(uint256 wrappedTokenId) public {
-        // Pastikan pengguna adalah pemilik WNFT
-        require(wrappedNft.ownerOf(wrappedTokenId) == msg.sender, "Not owner of wrapped token");
+        // Langsung transfer WNFT dari pengguna ke kontrak ini
+        wrappedNft.safeTransferFrom(msg.sender, address(this), wrappedTokenId);
 
         // Ambil ID token asli yang sesuai
         uint256 originalTokenId = wrappedToOriginal[wrappedTokenId];
 
-        // Bakar WNFT dari kepemilikan pengguna
+        // Bakar WNFT
         wrappedNft.burn(wrappedTokenId);
 
         // Kirim kembali NFT asli ke pengguna
-        originalNft.safeTransferFrom(address(this), msg.sender, originalTokenId);
+        originalNft.transferFrom(address(this), msg.sender, originalTokenId);
 
         // Hapus data pelacakan
         delete originalToWrapped[originalTokenId];

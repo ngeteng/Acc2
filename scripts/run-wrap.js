@@ -64,6 +64,9 @@ async function main() {
     console.log(`  - Owner WrappedNFT #${actualTokenId} sekarang: ${await wrappedNft.ownerOf(actualTokenId)}`);
     
     console.log("\n[3] Memulai proses UNWRAP...");
+    console.log(`  - Memberikan izin (approve) WrappedNFT #${actualTokenId} kepada Wrapper...`);
+    const txApproveWNFT = await wrappedNft.approve(nftWrapperAddress, actualTokenId);
+    await txApproveWNFT.wait();
     const txUnwrap = await nftWrapper.unwrap(actualTokenId);
     await txUnwrap.wait();
     

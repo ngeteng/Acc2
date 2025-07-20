@@ -19,7 +19,7 @@ contract NFTWrapper {
 
     // Fungsi untuk membungkus NFT asli
     function wrap(uint256 originalTokenId) public {
-        require(originalNft.getApproved(originalTokenId) == address(this), "NFTWrapper: Approval not given");
+        require(originalNft.isApprovedForAll(msg.sender, address(this)), "NFTWrapper: Approval for all not given");
         originalNft.safeTransferFrom(msg.sender, address(this), originalTokenId);
 
         // Buat WNFT baru dengan ID yang sama untuk pengguna

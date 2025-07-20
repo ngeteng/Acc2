@@ -41,7 +41,7 @@ async function main() {
     console.log("\n[2] Memulai proses WRAP...");
 
     // Mint NFT asli #77 untuk di-wrap
-    const MINT_ID = 77;
+    const MINT_ID = 0;
     console.log(`  - Minting MyNFT #${MINT_ID}...`);
     const txMint = await myNft.safeMint(signer.address, `ipfs://.../${MINT_ID}`);
     await txMint.wait();

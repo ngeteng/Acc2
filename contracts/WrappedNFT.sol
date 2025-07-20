@@ -9,18 +9,15 @@ contract WrappedNFT is ERC721Burnable, Ownable {
 
     constructor() ERC721("Wrapped Chaos NFT", "WCNFT") Ownable(msg.sender) {}
 
-    // Mengatur alamat kontrak wrapper yang berwenang
     function setWrapper(address _wrapperAddress) public onlyOwner {
         wrapperContract = _wrapperAddress;
     }
 
-    // Fungsi untuk membuat WNFT baru, hanya bisa dipanggil oleh wrapper
     function mint(address to, uint256 tokenId) public {
         require(msg.sender == wrapperContract, "Only wrapper can mint");
         _safeMint(to, tokenId);
     }
 
-    // Fungsi untuk membakar WNFT, hanya bisa dipanggil oleh wrapper
     function burn(uint256 tokenId) public override {
         require(msg.sender == wrapperContract, "Only wrapper can burn");
         _burn(tokenId);

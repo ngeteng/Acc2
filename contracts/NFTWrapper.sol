@@ -8,7 +8,6 @@ contract NFTWrapper {
     IERC721 public immutable originalNft;
     WrappedNFT public immutable wrappedNft;
 
-    require(originalNft.getApproved(originalTokenId) == address(this), "NFTWrapper: Approval not given");
     mapping(uint256 => uint256) public originalToWrapped;
     // Melacak pasangan ID token: wrappedId => originalId
     mapping(uint256 => uint256) public wrappedToOriginal;
@@ -20,7 +19,7 @@ contract NFTWrapper {
 
     // Fungsi untuk membungkus NFT asli
     function wrap(uint256 originalTokenId) public {
-        // Pindahkan NFT asli dari pengguna ke kontrak ini
+        require(originalNft.getApproved(originalTokenId) == address(this), "NFTWrapper: Approval not given");
         originalNft.safeTransferFrom(msg.sender, address(this), originalTokenId);
 
         // Buat WNFT baru dengan ID yang sama untuk pengguna

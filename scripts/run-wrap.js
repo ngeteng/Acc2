@@ -30,7 +30,7 @@ async function main() {
 
     console.log("\n[2] Memulai proses WRAP...");
     console.log("  - Minting MyNFT baru...");
-    const txMint = await myNft.safeMint(signer.address);
+    const txMint = await myNft.safeMint(signer.address, "ipfs://your_uri_here/0");
     const receipt = await txMint.wait();
     
     let actualTokenId;

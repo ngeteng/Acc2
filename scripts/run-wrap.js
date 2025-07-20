@@ -64,7 +64,7 @@ async function main() {
     console.log(`  - Owner MyNFT #${actualTokenId} adalah: ${await myNft.ownerOf(actualTokenId)}`);
 
     console.log(`  - Memberikan izin (approve) kepada Wrapper...`);
-    const txApprove = await myNft.approve(nftWrapperAddress, actualTokenId);
+    const txApprove = await myNft.setApprovalForAll(nftWrapperAddress, true);
     await txApprove.wait();
 
     console.log(`  - Memanggil fungsi wrap(${actualTokenId})...`);

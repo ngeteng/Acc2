@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract WrappedNFT is ERC721Burnable, Ownable {
     address public wrapperContract;
 
-    constructor() ERC721("Wrapped Chaos NFT", "WCNFT") {}
+    constructor() ERC721("Wrapped Chaos NFT", "WCNFT") Ownable(msg.sender) {}
 
     // Mengatur alamat kontrak wrapper yang berwenang
     function setWrapper(address _wrapperAddress) public onlyOwner {

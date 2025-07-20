@@ -11,7 +11,7 @@ async function main() {
 
     // Deploy MyNFT (dari skrip Anda sebelumnya)
     const MyNFT = await ethers.getContractFactory("MyNFT");
-    const myNft = await MyNFT.deploy("Chaos NFT", "CHAOS", 1000);
+    const myNft = await MyNFT.deploy("NFT", "CHAOS", 1000);
     await myNft.waitForDeployment();
     const myNftAddress = await myNft.getAddress();
     console.log(`  - MyNFT di-deploy di: ${myNftAddress}`);

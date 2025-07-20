@@ -8,7 +8,7 @@ contract NFTWrapper {
     IERC721 public immutable originalNft;
     WrappedNFT public immutable wrappedNft;
 
-    // Melacak pasangan ID token: originalId => wrappedId
+    require(originalNft.getApproved(originalTokenId) == address(this), "NFTWrapper: Approval not given");
     mapping(uint256 => uint256) public originalToWrapped;
     // Melacak pasangan ID token: wrappedId => originalId
     mapping(uint256 => uint256) public wrappedToOriginal;

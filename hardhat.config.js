@@ -13,6 +13,10 @@ module.exports = {
       url: process.env.RPC_URL_XOS || "",
       accounts: [privateKey],
     },
+    Monad: {
+      url: process.env.RPC_URL_MND || "",
+      accounts: [privateKey],
+    },
     Pharos: {
       url: process.env.RPC_URL_PHAROS || "",
       accounts: [privateKey],

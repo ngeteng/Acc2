@@ -21,8 +21,8 @@ module.exports = {
       url: process.env.RPC_URL_PHAROS || "",
       accounts: [privateKey],
     },
-    'somnia-testnet': {
-      url: process.env.RPC_URL_SOMNIA || "https://dream-rpc.somnia.network/",
+    'Giwa': {
+      url: process.env.RPC_URL_GIWA || "",
       accounts: [privateKey],
     },
     OG: {
